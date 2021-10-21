@@ -15,11 +15,11 @@ function App() {
   return (
     <div className="App">
       <Switch>
-        <Router>
-          <Route exact path="/" component={() => (<PersonInfo fetchData={fetchData} />)} />
-          <Route exact path="/details/:id" component={() => (<Details data={data} />)} />
-          {/* <Route exact path="*" component={() => (<PersonInfo fetchData={fetchData} />)} /> */}
-        </Router>
+
+        <Route exact path="/" component={() => (<PersonInfo fetchData={fetchData} />)} />
+        <Route exact path="/details/:id" component={() => (<Details data={data} />)} />
+        <Route path="*" ><PersonInfo fetchData={fetchData} /></Route>
+
       </Switch>
     </div>
   );
