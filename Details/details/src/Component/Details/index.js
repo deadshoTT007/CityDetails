@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import axios from 'axios'
+import { withRouter } from 'react-router'
 const useStyles = makeStyles(theme => ({
     detailsContainer: {
         // background: "red"
@@ -19,38 +20,59 @@ const useStyles = makeStyles(theme => ({
         marginLeft: "7px"
     }
 }))
-const Details = ({ id }) => {
+const Details = (props) => {
+    const { data } = props;
+
     const classes = useStyles()
-    const [cityData, setCityData] = useState([])
-    const api = `https://secure.drivezy.com/city/${id}`
-    const fetchDetail = () => {
+    console.log(props.match.params.id, "id")
+    const api = `https://secure.drivezy.com/city/${props.match.params.id}`
+    const [eachCityDetail, setEachCityDetail] = useState(null)
+    const cityData = data
+    const fetchEachDetail = () => {
         axios(api).then(({ data }) => {
-            setCityData(data.response)
+            setEachCityDetail(data.response)
         })
     }
+    // React.useEffect(() => {
+    //     fetchEachDetail()
+    // }, [])
     React.useEffect(() => {
-        fetchDetail()
-    }, [id])
+        if (!data.id) {
+            fetchEachDetail()
+        }
+        if (cityData) setEachCityDetail(cityData)
+        if (eachCityDetail) setEachCityDetail(eachCityDetail)
+    }, [])
+
+
+    console.log(eachCityDetail, "cityDetail")
+    // console.log(data, "data")
+    // const [cityData, setCityData] = useState([])
+
     // fetchDetail()
+    // console.log(cityData, "api")
     return (
         <div className={classes.detailsContainer} >
             <h1 className={classes.headerText}>Detail Of City </h1>
-            <div className={classes.mainContainer}>
-                <div className={classes.eachDetailsContainer}>
-                    <img src={cityData.image} alt="" />
+
+            {eachCityDetail &&
+                <div>
+                    <div className={classes.eachDetailsContainer}>
+                        <img src={eachCityDetail.image} alt="" />
+                        <h3 className={classes.mainText}>Place :<span className={classes.subHeader}>{eachCityDetail.name}</span></h3>
+                    </div>
+                    <div className={classes.eachDetailsContainer}>
+                        <h3 className={classes.mainText}>Name :<span className={classes.subHeader}>{eachCityDetail.contact_person}</span> </h3>
+                    </div>
+                    <div className={classes.eachDetailsContainer}>
+                        <h3 className={classes.mainText}>Number :<span className={classes.subHeader}>{eachCityDetail.contact_number}</span></h3>
+                    </div>
                 </div>
-                <div className={classes.eachDetailsContainer}>
-                    <h3 className={classes.mainText}>Place :<span className={classes.subHeader}>{cityData.name}</span></h3>
-                </div>
-                <div className={classes.eachDetailsContainer}>
-                    <h3 className={classes.mainText}>Name :<span className={classes.subHeader}>{cityData.contact_person}</span> </h3>
-                </div>
-                <div className={classes.eachDetailsContainer}>
-                    <h3 className={classes.mainText}>Number :<span className={classes.subHeader}>{cityData.contact_number}</span></h3>
-                </div>
-            </div>
+
+            }
         </div>
+
     )
 }
 
-export default Details
+export default withRouter(Details);

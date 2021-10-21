@@ -22,7 +22,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import axios from 'axios';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { withRouter } from 'react-router-dom'
-
+import CityModal from '../CityModal';
 
 
 
@@ -156,10 +156,25 @@ const useStyles = makeStyles((theme) => ({
         top: 20,
         width: 1,
     },
+    detailsButton: {
+        outline: "none",
+        background: "#6d32a8",
+        color: "#fff",
+        margin: "0 10px",
+        cursor: "pointer"
+    },
+    modalButton: {
+        outline: "none",
+        background: "#2668ad",
+        color: "#fff",
+        margin: "0 10px",
+        cursor: "pointer"
+
+    }
 }));
 
 function PersonInfo(props) {
-    const { fetchId } = props
+    const { fetchData } = props
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -167,16 +182,19 @@ function PersonInfo(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [data, setData] = React.useState([])
-    const [id, setId] = React.useState("")
+    const [value, setvalue] = React.useState(null)
+    const [open, setOpen] = React.useState(false)
+    const [modalData, setModalData] = React.useState(null)
+
     const api = "https://secure.drivezy.com/city"
 
-    const fetchData = () => {
+    const fetch = () => {
         axios(api).then(({ data }) => {
             setData(data.response)
         })
     }
     React.useEffect(() => {
-        fetchData()
+        fetch()
     }, [])
 
 
@@ -195,8 +213,8 @@ function PersonInfo(props) {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        fetchId(name)
+    const detailsHandleClick = (event, name, id) => {
+        fetchData(name)
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
 
@@ -212,9 +230,10 @@ function PersonInfo(props) {
                 selected.slice(selectedIndex + 1),
             );
         }
+        setvalue({ id: id, open: true })
 
         setSelected(newSelected);
-        props.history.push('/details')
+        props.history.push(`details/${id}`)
     };
 
     const handleChangePage = (event, newPage) => {
@@ -225,6 +244,13 @@ function PersonInfo(props) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+    const modalHandleClick = (e, data) => {
+        setOpen(true)
+        setModalData(data)
+    }
+    const closeModal = () => {
+        setOpen(false)
+    }
 
 
 
@@ -262,7 +288,7 @@ function PersonInfo(props) {
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={(event) => handleClick(event, row.id)}
+
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
@@ -281,7 +307,14 @@ function PersonInfo(props) {
                                             {/* <TableCell align="th">{row.contact_person}</TableCell> */}
                                             <TableCell align="right">{row.contact_number}</TableCell>
                                             <TableCell align="right">{row.minimum_fuelless_hours}</TableCell>
-                                            <TableCell align="right">{relativeTime}</TableCell>
+                                            <TableCell align="right">
+                                                <button className={classes.detailsButton} onClick={(event) => detailsHandleClick(event, row, row.id)}>Details</button>
+
+                                                {relativeTime}
+
+                                                <button className={classes.modalButton} onClick={(e) => modalHandleClick(e, row)}>Modal</button>
+                                            </TableCell>
+
                                         </TableRow>
                                     );
                                 })}
@@ -299,6 +332,7 @@ function PersonInfo(props) {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
+            <CityModal open={open} closeModal={closeModal} modalData={modalData} />
         </div>
 
     );
