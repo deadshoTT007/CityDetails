@@ -182,7 +182,6 @@ function PersonInfo(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [data, setData] = React.useState([])
-    const [value, setvalue] = React.useState(null)
     const [open, setOpen] = React.useState(false)
     const [modalData, setModalData] = React.useState(null)
 
@@ -230,7 +229,6 @@ function PersonInfo(props) {
                 selected.slice(selectedIndex + 1),
             );
         }
-        setvalue({ id: id, open: true })
 
         setSelected(newSelected);
         props.history.push(`details/${id}`)

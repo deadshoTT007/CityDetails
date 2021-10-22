@@ -18,8 +18,8 @@ function App() {
 
         <Route exact path="/" component={() => (<PersonInfo fetchData={fetchData} />)} />
         <Route exact path="/details/:id" component={() => (<Details data={data} />)} />
-        <Route path="*" ><PersonInfo fetchData={fetchData} /></Route>
-
+        {/* <Route p1ath="*" ><PersonInfo fetchData={fetchData} /></Route> */}
+        <Redirect to="/" component={() => (<PersonInfo fetchData={fetchData} />)} />
       </Switch>
     </div>
   );
